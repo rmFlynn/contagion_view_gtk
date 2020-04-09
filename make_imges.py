@@ -44,37 +44,33 @@ datac['geometry'] = datac.geometry.centroid
 ax = gplt.polyplot(contiguous_usa,projection=gcrs.WebMercator())
 gplt.kdeplot(datac, clip = contiguous_usa, ax=ax)
 
-def cp(data):
-    pass
-
-day = data.columns[-2]
-contiguous_usa = gpd.read_file(gplt.datasets.get_path('contiguous_usa'))
-plt.clf()
-dat = data.copy()
-dat.geometry = dat.geometry.centroid
-point_kwargs = {
-             'edgecolor': 'black', 'linewidth': 0.5
-            }
-ax = gplt.webmap(contiguous_usa, projection=gcrs.WebMercator())
-gplt.pointplot(
-            dat, projection=gcrs.AlbersEqualArea(),
-            scale=day,
-            limits=(0,200),
-            hue=day, 
-            cmap='Reds',
-            #legend=True,
-            ax=ax,
-            **point_kwargs
-            )
-#dat = dat.sort_values(by=[day], ascending=False)
-#dat_max = dat.head(20).copy()
-#dat_max['coords'] = dat_max.geometry.centroid.apply(lambda x: x.representative_point().coords[:])
-#dat_max['coords'] = [coords[0] for coords in dat_max['coords']]
-#for idx, row in dat_max.iterrows():
-#    plt.annotate(s=row['county_nam'], xy=row['coords'],
-#                horizontalalignment='center')
-
-plt.savefig("nat_"+day + ".png", bbox_inches='tight', pad_inches=0.1)
+def point_plot(data, day):
+    contiguous_usa = gpd.read_file(gplt.datasets.get_path('contiguous_usa'))
+    plt.clf()
+    dat = data.copy()
+    dat.geometry = dat.geometry.centroid
+    point_kwargs = {
+                 'edgecolor': 'black', 'linewidth': 0.5
+                }
+    ax = gplt.webmap(contiguous_usa, projection=gcrs.WebMercator())
+    gplt.pointplot(
+                dat, projection=gcrs.AlbersEqualArea(),
+                scale=day,
+                limits=(0,200),
+                hue=day, 
+                cmap='Reds',
+                #legend=True,
+                ax=ax,
+                **point_kwargs
+                )
+    #dat = dat.sort_values(by=[day], ascending=False)
+    #dat_max = dat.head(20).copy()
+    #dat_max['coords'] = dat_max.geometry.centroid.apply(lambda x: x.representative_point().coords[:])
+    #dat_max['coords'] = [coords[0] for coords in dat_max['coords']]
+    #for idx, row in dat_max.iterrows():
+    #    plt.annotate(s=row['county_nam'], xy=row['coords'],
+    #                horizontalalignment='center')
+    plt.savefig("nat_"+day + ".png", bbox_inches='tight', pad_inches=0.1)
 
 
 state = "Colorado"

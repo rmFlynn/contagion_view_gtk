@@ -70,10 +70,14 @@ for day in obs:
 obs = list(data.columns[35:])
 data = data[data[obs[-1]] > 0]
 
+for day in obs:
+    data[day] = day[day].values.astype('int64')
+
 for i in data.columns:
     data[i].head()
 
 data.rename(columns = {'NAME': 'county_name'}, inplace=True)
+data.geometry = data.geometry.centroid.representative_point().coords[:][0]
 
 data.to_file("data_set2/full_data.shp")
 #data2 =gpd.read_file("full_data.shp")
