@@ -63,22 +63,33 @@ data = data[data['STNAME'] != "Alaska"]
 data = data[data['STNAME'] != "Hawaii"]
 data = data[data['STNAME'] != "Virgin Islands"]
 data = data[data['STNAME'] != "Puerto Rico"]
-obs = list(data.columns[35:])
+obs = list(data.columns[36:])
 for day in obs:
     data.rename(columns = {day: day.replace("/", "-")}, inplace=True)
 
-obs = list(data.columns[35:])
+obs = list(data.columns[36:])
 data = data[data[obs[-1]] > 0]
 
 for day in obs:
-    data[day] = day[day].values.astype('int64')
+    data[day] = data[day].values.astype('int32')
+
+data.rename(columns = {'NAME': 'county_name'}, inplace=True)
+data.geometry = data.geometry.centroid.representative_point()
+data_pd = pd.DataFrame(data)
+data_pd.geometry = data.geometry.apply(lambda x : x.coords[:][0])
+data = data_pd
+
+data = data.reset_index()
+
+data[day] = data[day].values.astype('int32')
+data.geometry = data.geometry.apply(lambda x: np.asarray(x).astype('float32'))
 
 for i in data.columns:
     data[i].head()
 
-data.rename(columns = {'NAME': 'county_name'}, inplace=True)
-data.geometry = data.geometry.centroid.representative_point().coords[:][0]
 
-data.to_file("data_set2/full_data.shp")
+data.to_pickle("data_set3.pkl")
+
+#data.to_file("data_set2/full_data.shp")
 #data2 =gpd.read_file("full_data.shp")
 
