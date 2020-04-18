@@ -6,10 +6,40 @@ import geoplot as gplt
 import geoplot.crs as gcrs
 import mapclassify
 import matplotlib.pyplot as plt
+import seaborn as sea
 
 
 
-data = gpd.read_file('./data_set2/full_data.shp')
+# data = gpd.read_file('./data_set2/full_data.shp')
+data = pd.read_pickle('data_set3.pkl')
+obs = list(data.columns[37:])
+times = pd.DataFrame()
+times['day_str'] = obs
+times['day'] = pd.to_datetime(times.day_str, infer_datetime_format=True)
+#counties = ['Denver', 'King', 'New York']
+counties = ['Denver', 'New York']
+dfs = []
+for county in counties:
+    t_data = data[data.county_name == county][obs].T
+    t_data = t_data.reset_index()
+    t_data.columns = ['day_str', 'cases']
+    t_data = t_data[t_data['cases'] > 0]
+    pop = data[data.county_name == county]['pop'].values[0]
+    #t_data['cases'] = t_data['cases']/(pop / 100000)
+    t_data['county'] = county 
+    t_data['day'] = pd.to_datetime(t_data.day_str, infer_datetime_format=True)
+    dfs.append(t_data.copy())
+
+c_data = pd.concat(dfs)
+times =  times[[i in c_data.day_str.values for i in times.day_str.values]]
+plt.clf()
+plt.figure(figsize=(20,9))
+plot = sea.pointplot(y='cases', x='day', hue="county",  markers='o', data=c_data)
+#plot = sea.lineplot(y='cases', x='day_str', hue="county",  markers='O', data=t_data)
+#plot.set_xticklabels(plot.get_xticklabels(), rotation=45)
+#plot.get_xticklabels()
+plot.set_xticklabels(times.day_str, rotation=45)
+plt.savefig("counties_over_time.png")#, transparent=True)
 
 def state_cp(state, data, day, lable=False):
     dat = data[data['STNAME'] == state].copy()
