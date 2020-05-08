@@ -5,7 +5,8 @@ import numpy as np
 
 # To many files not vary useful
 # pd.read_csv('./COVID-19/csse_covid_19_data/csse_covid_19_daily_reports/01-22-2020.csv')
-cov = pd.read_csv('./covid_csse/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv')
+#cov = pd.read_csv('./covid_csse/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv')
+cov = pd.read_csv('./COVID-19/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv')
 # Check the numbers
 # cov_d_raw[cov_d_raw['Country_Region'] != 'US']
 cov.columns
