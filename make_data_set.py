@@ -13,7 +13,7 @@ cov.columns
 #cov_d_raw = pd.read_csv('./ne_10m_admin_1_states_provinces/ne_10m_admin_1_states_provinces.shp')
 #cov_d_raw = pd.read_csv('./ne_10m_admin_1_states_provinces/ne_10m_admin_1_states_provinces.shp')
 pop_raw = pd.read_csv('./co-est2019-alldata.csv', encoding='latin-1')
-pop = pop_raw[list(pop_raw.columns[:7])]
+pop = pop_raw[list(pop_raw.columns[:7])].copy()
 pop['pop'] = pop_raw['POPESTIMATE2019']
 
 
@@ -74,6 +74,7 @@ for day in obs:
     data[day] = data[day].values.astype('int32')
 
 data.rename(columns = {'NAME': 'county_name'}, inplace=True)
+data.rename(columns = {'STNAME': 'state_name'}, inplace=True)
 data.geometry = data.geometry.centroid.representative_point()
 data_pd = pd.DataFrame(data)
 data_pd.geometry = data.geometry.apply(lambda x : x.coords[:][0])
@@ -87,8 +88,88 @@ data.geometry = data.geometry.apply(lambda x: np.asarray(x).astype('float32'))
 for i in data.columns:
     data[i].head()
 
+# #print(self.days)
+# max_case = np.amax(self.data[self.days].values)
+# for day in self.days:
+#     print(day)
+#     sizes = []
+#     for _, i in self.data.iterrows():
+#         size = int(i[day]/(max_case/500))
+#         if (size < 7) and (i[day] > 0):
+#             size = 7
+#         sizes.append(size)
+#     self.data[day] = sizes
+# self.make_marker_layer(self.view)
+#print(self.days)
+max_case = np.amax(data[obs].values)
 
-data.to_pickle("data_set3.pkl")
+data_total = data.copy()
+for day in obs:
+    print(day)
+    sizes = []
+    for _, i in data_total.iterrows():
+        size = int(i[day]/(max_case/500))
+        if (size < 7) and (i[day] > 0):
+            size = 7
+        sizes.append(size)
+    data_total[day+"_size"] = sizes
+
+data_total.to_pickle("data_state_total.pkl")
+
+data_permi = data.copy()
+for day in obs:
+    print(day)
+    sizes = []
+    ipmis= []
+    for _, i in data_permi.iterrows():
+        ipmi = int((i[day]*1000000)/i['pop'])
+        size = int((i[day]*10000)/i['pop'])
+        if (size < 7) and (i[day] > 0):
+            size = 7
+        sizes.append(size)
+        ipmis.append(ipmi)
+    data_permi[day] = ipmis
+    data_permi[day+"_size"] = sizes
+
+data_permi.to_pickle("data_state_permi.pkl")
+
+np.amax(data_permi[[i +"_size" for i in obs]].values)
+np.amax(data_permi[obs].values)
+np.amax(data_total[[i +"_size" for i in obs]].values)
+np.amax(data_total[obs].values)
+
+keep_state = []
+keep_county = []
+for day in obs:
+    data_total = data_total.sort_values(by=day, ascending=False)
+    ks = data_total[data_total[day] > 0].head(100)['state_name'].values
+    kc = data_total[data_total[day] > 0].head(100)['county_name'].values
+    keep_state = np.concatenate([keep_state, ks])
+    keep_county = np.concatenate([keep_county, kc])
+
+keep = pd.DataFrame({'state_name': keep_state, 'county_name': keep_county})
+keep = keep.drop_duplicates()
+data_total = pd.merge(data_total, keep , on = ['state_name', 'county_name'])
+data_total.to_pickle("data_nation_total.pkl")
+
+keep_state = []
+keep_county = []
+for day in obs:
+    data_permi = data_permi.sort_values(by=day, ascending=False)
+    ks = data_permi[data_permi[day] > 0].head(100)['state_name'].values
+    kc = data_permi[data_permi[day] > 0].head(100)['county_name'].values
+    keep_state = np.concatenate([keep_state, ks])
+    keep_county = np.concatenate([keep_county, kc])
+
+keep = pd.DataFrame({'state_name': keep_state, 'county_name': keep_county})
+keep = keep.drop_duplicates()
+data_permi = pd.merge(data_permi, keep , on = ['state_name', 'county_name'])
+
+data_permi.to_pickle("data_nation_permi.pkl")
+np.save("days.npy", obs)
+
+i['county_name'], i['state_name']
+
 
 #data.to_file("data_set2/full_data.shp")
 #data2 =gpd.read_file("full_data.shp")
