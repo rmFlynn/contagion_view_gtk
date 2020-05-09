@@ -5,6 +5,7 @@ import numpy as np
 
 # To many files not vary useful
 cov = pd.read_csv('./COVID-19/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv')
+
 # Check the numbers
 cov.columns
 
@@ -12,11 +13,12 @@ pop_raw = pd.read_csv('./co-est2019-alldata.csv', encoding='latin-1')
 pop = pop_raw[list(pop_raw.columns[:7])].copy()
 pop['pop'] = pop_raw['POPESTIMATE2019']
 
-shapefile1 = './map2/tl_2017_us_county.shp'
+# shapefile1 = './map2/tl_2017_us_county.shp'
 # shapefile2 = './map3/US_County_Boundaries.shp'
-gdf = gpd.read_file(shapefile1)#[['ADMIN', 'ADM0_A3', 'geometry']]#Rename columns.
+# gdf = gpd.read_file(shapefile1)#[['ADMIN', 'ADM0_A3', 'geometry']]#Rename columns.
 # gdf2 = gpd.read_file(shapefile2)#[['ADMIN', 'ADM0_A3', 'geometry']]#Rename columns.
 # gdf = gdf1#gpd.sjoin(gdf2, gdf1, how="inner", op='intersects')
+gdf = gpd.read_file('us_county_shapes/tl_2019_us_county.shp')
 
 pop.rename(columns = {'STATE': "state", 'COUNTY': "county"}, inplace=True)
 gdf.rename(columns = {'STATEFP': "state", 'COUNTYFP': "county"}, inplace=True)
