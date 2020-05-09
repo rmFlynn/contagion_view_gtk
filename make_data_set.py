@@ -64,7 +64,7 @@ for day in obs:
     print(day)
     sizes = []
     for _, i in data_total.iterrows():
-        size = int(i[day]/(max_case/500))
+        size = int(i[day]/(max_case/450))
         if (size < 7) and (i[day] > 0):
             size = 7
         sizes.append(size)
@@ -72,19 +72,34 @@ for day in obs:
 
 data_total.to_pickle("data_state_total.pkl")
 
+
 data_permi = data.copy()
 for day in obs:
     print(day)
-    sizes = []
     ipmis= []
+    sizes = []
     for _, i in data_permi.iterrows():
         ipmi = int((i[day]*1000000)/i['pop'])
-        size = int((i[day]*10000)/i['pop'])
+        ipmis.append(ipmi)
         if (size < 7) and (i[day] > 0):
             size = 7
+        else:
+            size=0
         sizes.append(size)
-        ipmis.append(ipmi)
+    data_permi[day+"_size"] = sizes
     data_permi[day] = ipmis
+
+max_perm = np.amax(data_permi[obs].values)
+diviser = max_perm / 450
+for day in obs:
+    print(day)
+    sizes = []
+    for _, i in data_permi.iterrows():
+        t_size = i[day] / diviser
+        size = i[day+"_size"]
+        if size < t_size:
+            size = t_size 
+        sizes.append(size)
     data_permi[day+"_size"] = sizes
 
 data_permi.to_pickle("data_state_permi.pkl")

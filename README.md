@@ -1,5 +1,11 @@
-# covid19_gtk
+# Contagion View GTK
+
 sudo apt install libgeos-dev libproj-dev proj-data proj-bina
-pip3 install geoplot
-pip3 uninstall shapely
-pip3 install --no-binary shapely shapely
+
+## Get US county map data 
+
+wget ftp://ftp2.census.gov/geo/tiger/TIGER2019/COUNTY/tl_2019_us_county.zip
+
+unzip tl_2019_us_county.zip -d us_county_shapes
+
+rm tl_2019_us_county.*
