@@ -13,11 +13,6 @@ pop_raw = pd.read_csv('./co-est2019-alldata.csv', encoding='latin-1')
 pop = pop_raw[list(pop_raw.columns[:7])].copy()
 pop['pop'] = pop_raw['POPESTIMATE2019']
 
-# shapefile1 = './map2/tl_2017_us_county.shp'
-# shapefile2 = './map3/US_County_Boundaries.shp'
-# gdf = gpd.read_file(shapefile1)#[['ADMIN', 'ADM0_A3', 'geometry']]#Rename columns.
-# gdf2 = gpd.read_file(shapefile2)#[['ADMIN', 'ADM0_A3', 'geometry']]#Rename columns.
-# gdf = gdf1#gpd.sjoin(gdf2, gdf1, how="inner", op='intersects')
 gdf = gpd.read_file('us_county_shapes/tl_2019_us_county.shp')
 
 pop.rename(columns = {'STATE': "state", 'COUNTY': "county"}, inplace=True)
@@ -72,7 +67,7 @@ for day in obs:
         sizes.append(size)
     data_total[day+"_size"] = sizes
 
-data_total.to_pickle("data_state_total.pkl")
+data_total.to_pickle("data_state_total.pkl", protocol=3)
 
 
 data_permi = data.copy()
@@ -104,7 +99,7 @@ for day in obs:
         sizes.append(size)
     data_permi[day+"_size"] = sizes
 
-data_permi.to_pickle("data_state_permi.pkl")
+data_permi.to_pickle("data_state_permi.pkl", protocol=3)
 
 np.amax(data_permi[[i +"_size" for i in obs]].values)
 np.amax(data_permi[obs].values)
@@ -123,7 +118,7 @@ for day in obs:
 keep = pd.DataFrame({'state_name': keep_state, 'county_name': keep_county})
 keep = keep.drop_duplicates()
 data_total = pd.merge(data_total, keep , on = ['state_name', 'county_name'])
-data_total.to_pickle("data_nation_total.pkl")
+data_total.to_pickle("data_nation_total.pkl", protocol=3)
 
 keep_state = []
 keep_county = []
@@ -138,8 +133,6 @@ keep = pd.DataFrame({'state_name': keep_state, 'county_name': keep_county})
 keep = keep.drop_duplicates()
 data_permi = pd.merge(data_permi, keep , on = ['state_name', 'county_name'])
 
-data_permi.to_pickle("data_nation_permi.pkl")
+data_permi.to_pickle("data_nation_permi.pkl", protocol=3)
 np.save("days.npy", obs)
-
-i['county_name'], i['state_name']
 
