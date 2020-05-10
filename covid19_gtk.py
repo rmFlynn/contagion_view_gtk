@@ -266,12 +266,18 @@ class HeaderBarWindow(Gtk.Window):
     def load_data(self):
         self.ts_data = pd.DataFrame()
         if(self.proportion == 0):
+            # Red 
+            color = Clutter.Color.new(210, 44, 44, 187)
             if(self.state == "Nation"):
                 data = pd.read_pickle('data_nation_total.pkl')
             else:
                 data = pd.read_pickle('data_state_total.pkl')
                 data = data[data['state_name'] == self.state]
         if(self.proportion == 1):
+            # Old Orange
+            #color = Clutter.Color.new(0xf3, 0x94, 0x07, 0xbb)
+            # Orange
+            color = Clutter.Color.new(240, 114, 73, 187)
             if(self.state == "Nation"):
                 data = pd.read_pickle('data_nation_permi.pkl')
             else:
@@ -279,14 +285,14 @@ class HeaderBarWindow(Gtk.Window):
                 data = data[data['state_name'] == self.state]
         self.data = data
         self.data['point'] = [Champlain.Point.new() for i in self.data.index]
+        for _, i in self.data.iterrows():
+            i.point.set_color(color)
 
 
     def make_marker_layer(self):
         view = self.view
 
-
         self.marker_layer.remove_all()
-        
         
         for _, i in self.data.iterrows():
             #i.point.set_color(orange)
@@ -299,10 +305,8 @@ class HeaderBarWindow(Gtk.Window):
         self.marker_layer.show()
 
     def alter_points(self):
-        orange = Clutter.Color.new(0xf3, 0x94, 0x07, 0xbb)
         for _, i in self.data.iterrows():
             i.point.set_size(i[self.day + '_size'])
-            i.point.set_color(orange)
             #print(i[day])
 
     def mark_function(self, ct, st, x1, x0):
