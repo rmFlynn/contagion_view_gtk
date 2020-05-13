@@ -61,7 +61,7 @@ for day in obs:
     print(day)
     sizes = []
     for _, i in data_total.iterrows():
-        size = int(i[day]/(max_case/450))
+        size = int(i[day]/(max_case/300))
         if (size < 7) and (i[day] > 0):
             size = 7
         sizes.append(size)
@@ -87,7 +87,7 @@ for day in obs:
     data_permi[day] = ipmis
 
 max_perm = np.amax(data_permi[obs].values)
-diviser = max_perm / 450
+diviser = max_perm / 250
 for day in obs:
     print(day)
     sizes = []

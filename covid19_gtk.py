@@ -6,6 +6,12 @@ import numpy as np
 import matplotlib.pyplot as plt 
 from matplotlib.backends.backend_gtk3agg import (
     FigureCanvasGTK3Agg as FigureCanvas)
+
+params = {"ytick.color" : "w",
+          "xtick.color" : "w",
+          "axes.labelcolor" : "w",
+          "axes.edgecolor" : "w"}
+plt.rcParams.update(params)
 from matplotlib.figure import Figure
 import numpy as np
 
@@ -48,11 +54,11 @@ class HeaderBarWindow(Gtk.Window):
 
         self.make_spin_zoom()
 
-        stack = Gtk.Stack()
+        self.stack = Gtk.Stack()
         #stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
-        stack.set_transition_duration(1000)
+        #stack.set_transition_duration(1000)
 
-        stack.add_titled(embed, "Map", "Map View")
+        self.stack.add_titled(embed, "Map", "Map View")
 
         box_r = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         Gtk.StyleContext.add_class(box_r.get_style_context(), "linked")
@@ -65,17 +71,17 @@ class HeaderBarWindow(Gtk.Window):
         box_l.pack_start(self.make_liststore_proportion(), True, True, 0)
         box_r.pack_start(self.spinbutton, True, True, 0)
 
-        canvas = self.make_time_series()
-        stack.add_titled(canvas, "time", "Time Series")
+        #canvas = self.make_time_series()
+        self.make_time_series()
 
         stack_switcher = Gtk.StackSwitcher()
-        stack_switcher.set_stack(stack)
+        stack_switcher.set_stack(self.stack)
         box_l.pack_end(stack_switcher, True, True, 0)
 
         hb.pack_start(box_r)
         hb.pack_end(box_l)
         
-        self.add(stack)
+        self.add(self.stack)
 
     def make_liststore_day(self):
         liststore = Gtk.ListStore(int, str)
@@ -91,30 +97,6 @@ class HeaderBarWindow(Gtk.Window):
         combo.set_active(0)
         return combo
 
-    # def make_spin_zoom(self):
-    #     times = pd.DataFrame()
-    #     times['day_str'] = self.days
-    #     times['day'] = pd.to_datetime(times.day_str, infer_datetime_format=True)
-    #     #counties = ['Denver', 'King', 'New York']
-    #     counties = ['Denver', 'New York']
-    #     dfs = []
-    #     for county in counties:
-    #         t_data = data[data.county_name == county][self.days].T
-    #         t_data = t_data.reset_index()
-    #         t_data.columns = ['day_str', 'cases']
-    #         t_data = t_data[t_data['cases'] > 0]
-    #         pop = data[data.county_name == county]['pop'].values[0]
-    #         #t_data['cases'] = t_data['cases']/(pop / 100000)
-    #         t_data['county'] = county 
-    #         t_data['day'] = pd.to_datetime(t_data.day_str, infer_datetime_format=True)
-    #         dfs.append(t_data.copy())
-    #     c_data = pd.concat(dfs)
-    #     times =  times[[i in c_data.day_str.values for i in times.day_str.values]]
-    #     plt.clf()
-    #     plt.figure(figsize=(20,9))
-    #     plot = sea.pointplot(y='cases', x='day', hue="county",  markers='o', data=c_data)
-    #     plot.set_xticklabels(times.day_str, rotation=45)
-    #     #plt.savefig("counties_over_time.png")#, transparent=True)
 
     def make_spin_zoom(self):
         self.spinbutton = Gtk.SpinButton.new_with_range(0, 20, 1)
@@ -123,45 +105,36 @@ class HeaderBarWindow(Gtk.Window):
         self.spinbutton.set_value(4)
 
     def make_time_series(self):
-        # data = gpd.read_file('./data_set2/full_data.shp')
-        # data = pd.read_pickle('data_set3.pkl')
-        # obs = list(data.columns[37:])
-        times = pd.DataFrame()
-        times['day_str'] = self.days
-        times['day'] = pd.to_datetime(times.day_str, infer_datetime_format=True)
-        loca = [['Los Angeles', 'California'], ['Orange', 'New York']]
-        #counties = ['Denver', 'King', 'New York']
-        counties = ['Denver', 'New York']
-        counties = ['Denver', 'New York']
-        #  dfs = []
-        #  for county in counties:
-        #      #print(self.data_orig['county_name'] )
-        #      t_data = self.data_orig[self.data['county_name'] == county][self.days].T
-        #      t_data = t_data.reset_index()
-        #      t_data.columns = ['day_str', 'cases']
-        #      t_data = t_data[t_data['cases'] > 0]
-        #      pop = data[data.county_name == county]['pop'].values[0]
-        #      #t_data['cases'] = t_data['cases']/(pop / 100000)
-        #      t_data['county'] = county 
-        #      t_data['day'] = pd.to_datetime(t_data.day_str, infer_datetime_format=True)
-        #      dfs.append(t_data.copy())
-        #  c_data = pd.concat(dfs)
-        #  times =  times[[i in c_data.day_str.values for i in times.day_str.values]]
-        label = Gtk.Label()
-        label.set_markup("<big>The time series view will go here.</big>")
-        return label
+        #label = Gtk.Label()
+        self.fig = Figure(dpi=100)
+        self.fig.patch.set_alpha(0)
+        self.fig.suptitle("The time series view will go here.", fontsize=14, fontweight='bold',color="white")
+        self.ax = self.fig.add_subplot(111)
+        self.canvas = FigureCanvas(self.fig)
+        self.stack.add_titled(self.canvas, "time", "Time Series")
 
     def make_time_plot(self):
-        plt.clf()
-        plt.figure(figsize=(10,9))
-        plot = sea.pointplot(y='Cases', x='Time', hue="Location",  markers='o', data=self.ts_data)
-        #  #plot = sea.lineplot(y='cases', x='day_str', hue="county",  markers='O', data=t_data)
-        #  #plot.set_xticklabels(plot.get_xticklabels(), rotation=45)
-        #  #plot.get_xticklabels()
-        # times =  times[[i in self.ts_data.index.values for i in times.day_str.values]]
-        #plot.set_xticklabels(self.days, rotation=45)
+        #plt.clf
+        # self.fig.suptitle("", fontsize=1)
+        #self.fig.delaxes(self.ax)
+        #self.ax = self.fig.add_subplot(111)
+        self.ax.clear()
+        print(self.ts_data)
+        plot = sea.pointplot(y='Cases', 
+                             x='Time', 
+                             hue="Location",  
+                             ax = self.ax, 
+                             markers='o', 
+                             data=self.ts_data)
+        self.ax.xaxis.set_label_text("")
+        self.ax.patch.set_alpha(0)
+        self.ax.xaxis.set_major_locator(plt.MaxNLocator(10))
+        self.fig.canvas.draw()
+        #self.canvas = FigureCanvas(self.fig)
+        #self.stack.add_titled(self.canvas, "time", "Time Series")
+        #plt.close()
         print("figure made")
-        plt.savefig("counties_over_time.png")#, transparent=True)
+        #plt.savefig("counties_over_time.png")#, transparent=True)
 
 
     def make_liststore_proportion(self):
@@ -223,7 +196,6 @@ class HeaderBarWindow(Gtk.Window):
         model = widget.get_model()
         iter = widget.get_active_iter()
         id = model.get_value(iter, 0)
-        print()
         #self.alter_points(self.view, self.days[id])
         if self.proportion != id:
             self.proportion = id
@@ -265,6 +237,7 @@ class HeaderBarWindow(Gtk.Window):
 
     def load_data(self):
         self.ts_data = pd.DataFrame()
+        self.mark = pd.DataFrame()
         if(self.proportion == 0):
             # Red 
             color = Clutter.Color.new(210, 44, 44, 187)
@@ -285,6 +258,7 @@ class HeaderBarWindow(Gtk.Window):
                 data = data[data['state_name'] == self.state]
         self.data = data
         self.data['point'] = [Champlain.Point.new() for i in self.data.index]
+        self.data['label'] = [Champlain.Label.new() for i in self.data.index]
         for _, i in self.data.iterrows():
             i.point.set_color(color)
 
@@ -308,16 +282,53 @@ class HeaderBarWindow(Gtk.Window):
         for _, i in self.data.iterrows():
             i.point.set_size(i[self.day + '_size'])
             #print(i[day])
+        for _, i in self.mark.iterrows():
+            # i.point.set_color(i[self.day + '_size'])
+            if(self.proportion == 0):
+                i['label'].set_text("{:,}".format(i[self.day]) + 
+                                       " Cases, " + 
+                                       "{:,}".format(i['pop']) + 
+                                       " Pop\n" +
+                                       i['county_name'] +
+                                       ", " + 
+                                       i['state_name'])
+            elif(self.proportion == 1):
+                i['label'].set_text("{:,}".format(i[self.day]) + 
+                                       " Cases Per=mill, " + 
+                                       "{:,}".format(i['pop']) + 
+                                       " Pop\n" +
+                                       i['county_name'] +
+                                       ", " + 
+                                       i['state_name'])
 
     def mark_function(self, ct, st, x1, x0):
 
         def fun(actor, event, view):
-            lb = Champlain.Label.new_with_text(ct + ", " + st)
-            lb.set_location(x1, x0)
-            self.marker_layer.add_marker(lb)
+            #lb = Champlain.Label.new_with_text(ct + ", " + st)
             loca = self.data
             loca = loca[loca['state_name'] == st]
             loca = loca[loca['county_name'] == ct]
+            for _, i in loca.iterrows():
+                i['label'].set_location(x1, x0)
+                # i.point.set_color(i[''])
+                if(self.proportion == 0):
+                    i['label'].set_text("{:,}".format(i[self.day]) + 
+                                           " Cases, " + 
+                                           "{:,}".format(i['pop']) + 
+                                           " Pop\n" +
+                                           i['county_name'] +
+                                           ", " + 
+                                           i['state_name'])
+                elif(self.proportion == 1):
+                    i['label'].set_text("{:,}".format(i[self.day]) + 
+                                           " Cases Per=mill, " + 
+                                           "{:,}".format(i['pop']) + 
+                                           " Pop\n" +
+                                           i['county_name'] +
+                                           ", " + 
+                                           i['state_name'])
+                self.marker_layer.add_marker(i['label'])
+            self.mark = self.mark.append(loca)
             loca = loca[self.days].T
             loca.columns = ["Cases"]
             loca['Time'] = loca.index.values
@@ -325,10 +336,10 @@ class HeaderBarWindow(Gtk.Window):
             loca["Location"] = ct + ", " + st
             #print(self.ts_data.head())
             loca = loca[loca["Cases"] > 0]
-            print(loca.head())
+            #print(loca.head())
             self.data.to_csv("working.csv")
             self.ts_data = self.ts_data.append(loca)
-            print(self.ts_data.head())
+            # print(self.ts_data.head())
             self.make_time_plot()
 
         return fun
