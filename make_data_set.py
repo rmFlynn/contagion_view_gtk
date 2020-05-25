@@ -27,10 +27,10 @@ cov = cov[cov['Long_'] != 0]
 data = data[data.columns[data.columns != 'index_right']]
 data = gpd.sjoin(data, cov, how="inner", op='intersects')
 
-data = data[data['STNAME'] != "Alaska"]
-data = data[data['STNAME'] != "Hawaii"]
-data = data[data['STNAME'] != "Virgin Islands"]
-data = data[data['STNAME'] != "Puerto Rico"]
+#data = data[data['STNAME'] != "Alaska"]
+#data = data[data['STNAME'] != "Hawaii"]
+#data = data[data['STNAME'] != "Virgin Islands"]
+#data = data[data['STNAME'] != "Puerto Rico"]
 obs = list(data.columns[36:])
 for day in obs:
     data.rename(columns = {day: day.replace("/", "-")}, inplace=True)

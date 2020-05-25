@@ -28,6 +28,46 @@ import sys
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gio
 
+class TimeWindow(Gtk.Window):
+
+    def __init__(self):
+        Gtk.Window.__init__(self, title="Time Series")
+        self.connect("delete-event", Gtk.main_quit)
+        self.set_title( "Time Series" )
+        self.fig = Figure(dpi=100)
+        self.fig.patch.set_alpha(0)
+        # self.fig.suptitle("The time series view will go here.", fontsize=14, fontweight='bold',color="white")
+        self.ax = self.fig.add_subplot(111)
+        self.canvas = FigureCanvas(self.fig)
+        self.add(self.canvas)
+        self.connect("destroy", self.hide)
+
+    def make_time_plot(self, ts_data):
+        self.add(self.canvas)
+        self.set_size_request(800, 600)
+        self.ax.clear()
+        ts_data['Time'] = pd.to_datetime(ts_data['Time'])# - pd.to_timedelta(7, unit='d')
+        ts_data = ts_data.sort_values('Time').reset_index( drop=True)
+        ts_data['Time'] = ts_data['Time'].apply(lambda x : x.strftime('%b %-d'))
+        print(ts_data)
+        plot = sea.pointplot(y='Cases', 
+                             x='Time', 
+                             hue="Location",  
+                             ax = self.ax, 
+                             markers='o', 
+                             data=ts_data)
+        self.ax.xaxis.set_label_text("")
+        self.ax.patch.set_alpha(0)
+        #self.ax.xaxis.set_major_locator(plt.MaxNLocator(10))
+        for ind, label in enumerate(plot.get_xticklabels()):
+            if ind % 10 == 0:  # every 10th label is kept
+                label.set_visible(True)
+            else:
+                label.set_visible(False)
+        self.fig.canvas.draw()
+        self.show_all()
+        print("figure made")
+
 class HeaderBarWindow(Gtk.Window):
 
     def __init__(self):
@@ -54,11 +94,15 @@ class HeaderBarWindow(Gtk.Window):
 
         self.make_spin_zoom()
 
-        self.stack = Gtk.Stack()
         #stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
         #stack.set_transition_duration(1000)
 
-        self.stack.add_titled(embed, "Map", "Map View")
+        # self.noteBook = Gtk.Notebook();
+        #self.noteBook.set_tab_pos(Gtk.POS_LEFT);
+        #self.stack = Gtk.Stack()
+        # self.noteBook.append_page(embed, Gtk.Label("Map View"))
+        #noteBook.set_
+        #self.stack.add_titled(embed, "Map", "Map View")
 
         box_r = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         Gtk.StyleContext.add_class(box_r.get_style_context(), "linked")
@@ -72,16 +116,20 @@ class HeaderBarWindow(Gtk.Window):
         box_r.pack_start(self.spinbutton, True, True, 0)
 
         #canvas = self.make_time_series()
-        self.make_time_series()
+        #self.make_time_series()
+        #self.make_time_series()
+        self.time_vue = TimeWindow()
 
-        stack_switcher = Gtk.StackSwitcher()
-        stack_switcher.set_stack(self.stack)
-        box_l.pack_end(stack_switcher, True, True, 0)
+        #stack_switcher = Gtk.StackSwitcher()
+        #stack_switcher.set_stack(self.stack)
+        #box_l.pack_end(stack_switcher, True, True, 0)
 
         hb.pack_start(box_r)
         hb.pack_end(box_l)
         
-        self.add(self.stack)
+        #self.add(self.stack)
+        #self.add(self.noteBook)
+        self.add(embed)
 
     def make_liststore_day(self):
         liststore = Gtk.ListStore(int, str)
@@ -103,39 +151,6 @@ class HeaderBarWindow(Gtk.Window):
         self.spinbutton.connect("changed", self.zoom_changed)
         self.view.connect("notify::zoom-level", self.map_zoom_changed)
         self.spinbutton.set_value(4)
-
-    def make_time_series(self):
-        #label = Gtk.Label()
-        self.fig = Figure(dpi=100)
-        self.fig.patch.set_alpha(0)
-        self.fig.suptitle("The time series view will go here.", fontsize=14, fontweight='bold',color="white")
-        self.ax = self.fig.add_subplot(111)
-        self.canvas = FigureCanvas(self.fig)
-        self.stack.add_titled(self.canvas, "time", "Time Series")
-
-    def make_time_plot(self):
-        #plt.clf
-        # self.fig.suptitle("", fontsize=1)
-        #self.fig.delaxes(self.ax)
-        #self.ax = self.fig.add_subplot(111)
-        self.ax.clear()
-        print(self.ts_data)
-        plot = sea.pointplot(y='Cases', 
-                             x='Time', 
-                             hue="Location",  
-                             ax = self.ax, 
-                             markers='o', 
-                             data=self.ts_data)
-        self.ax.xaxis.set_label_text("")
-        self.ax.patch.set_alpha(0)
-        self.ax.xaxis.set_major_locator(plt.MaxNLocator(10))
-        self.fig.canvas.draw()
-        #self.canvas = FigureCanvas(self.fig)
-        #self.stack.add_titled(self.canvas, "time", "Time Series")
-        #plt.close()
-        print("figure made")
-        #plt.savefig("counties_over_time.png")#, transparent=True)
-
 
     def make_liststore_proportion(self):
         liststore = Gtk.ListStore(int, str)
@@ -340,7 +355,7 @@ class HeaderBarWindow(Gtk.Window):
             self.data.to_csv("working.csv")
             self.ts_data = self.ts_data.append(loca)
             # print(self.ts_data.head())
-            self.make_time_plot()
+            self.time_vue.make_time_plot(self.ts_data)
 
         return fun
 
