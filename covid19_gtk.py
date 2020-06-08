@@ -1,27 +1,28 @@
-import gi
+# data stuff 
 import pandas as pd
-#import geopandas as gpd
 import numpy as np
-#import geoplot as gplt
+
+# plot stuff
 import matplotlib.pyplot as plt 
+from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtk3agg import (
     FigureCanvasGTK3Agg as FigureCanvas)
-
-params = {"ytick.color" : "w",
-          "xtick.color" : "w",
-          "axes.labelcolor" : "w",
-          "axes.edgecolor" : "w"}
-plt.rcParams.update(params)
-from matplotlib.figure import Figure
-import numpy as np
-
 import seaborn as sea
+
+# GTK stuff
+import gi
 gi.require_version('Champlain', '0.12')
 gi.require_version('GtkChamplain', '0.12')
 gi.require_version('GtkClutter', '1.0')
 from gi.repository import GtkClutter, Clutter
 GtkClutter.init([])  # Must be initialized before importing those:
 from gi.repository import GObject, Gtk, Champlain, GtkChamplain, Pango
+
+params = {"ytick.color" : "w",
+          "xtick.color" : "w",
+          "axes.labelcolor" : "w",
+          "axes.edgecolor" : "w"}
+plt.rcParams.update(params)
 
 import os
 import sys

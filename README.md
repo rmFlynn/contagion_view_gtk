@@ -3,10 +3,37 @@
 
 ### Introduction:
 
-Every one  has been affected by the Coronairus outbreak. When I started this project I did not honestly imagine that this crisis would stretch so far both socially and geographically. One of the many side effects of COVID-19 has been to make us hyper aware of how our social actions can impact our health, and the health of our community. 
+Every one  has been affected by the Corona virus outbreak. When I started this project I did not honestly imagine that this crisis would stretch so far both socially and geographically. One of the many side effects of COVID-19 has been to make us hyper aware of how our social actions can impact our health, and the health of our community. 
 
 Long after the current health crisis has passed, contagions will continue to be a significant threat to public health. With this in mind I created an application to acquire up-to-date information about the spread of COVID-19. I believe that a visualization is a good tool to communicate the risks, and encourage appropriate action.  
 
+### Install/Use:
+
+Contagion View has only been tested on Ubuntu 19.10 and 20.4.
+Python3 and pip should be installed and up to date.
+I also suggest you consider running this program in a [virtual environment](https://docs.python.org/3/library/venv.html).
+
+
+Download or clone the git repository 
+
+>> git clone https://github.com/rmFlynn/contagion_view_gtk.git
+
+Install prerequisites 
+
+```
+sudo apt install libchamplain-gtk-0.12-0 python-gi
+pip install wheel pycairo pandas numpy matplotlib seaborn 
+pip install vext
+pip install vext.gi
+```
+
+
+
+With the prerequisites installed the typical user should only need to execute:
+
+>> python covid19_gtk.py 
+
+If you want to update the data files your self you will need to understand and fallow the instructions in the next section.
 
 ### Datasets:
 
