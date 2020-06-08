@@ -95,16 +95,6 @@ class HeaderBarWindow(Gtk.Window):
 
         self.make_spin_zoom()
 
-        #stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
-        #stack.set_transition_duration(1000)
-
-        # self.noteBook = Gtk.Notebook();
-        #self.noteBook.set_tab_pos(Gtk.POS_LEFT);
-        #self.stack = Gtk.Stack()
-        # self.noteBook.append_page(embed, Gtk.Label("Map View"))
-        #noteBook.set_
-        #self.stack.add_titled(embed, "Map", "Map View")
-
         box_r = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         Gtk.StyleContext.add_class(box_r.get_style_context(), "linked")
 
@@ -116,20 +106,11 @@ class HeaderBarWindow(Gtk.Window):
         box_l.pack_start(self.make_liststore_proportion(), True, True, 0)
         box_r.pack_start(self.spinbutton, True, True, 0)
 
-        #canvas = self.make_time_series()
-        #self.make_time_series()
-        #self.make_time_series()
         self.time_vue = TimeWindow()
-
-        #stack_switcher = Gtk.StackSwitcher()
-        #stack_switcher.set_stack(self.stack)
-        #box_l.pack_end(stack_switcher, True, True, 0)
 
         hb.pack_start(box_r)
         hb.pack_end(box_l)
         
-        #self.add(self.stack)
-        #self.add(self.noteBook)
         self.add(embed)
 
     def make_liststore_day(self):
@@ -238,8 +219,8 @@ class HeaderBarWindow(Gtk.Window):
 
         scale = Champlain.Scale()
         scale.connect_view(self.view)
-        self.view.bin_layout_add(scale, Clutter.BinAlignment.START,
-            Clutter.BinAlignment.END)
+        #self.view.bin_layout_add(scale, Clutter.BinAlignment.START,
+        #    Clutter.BinAlignment.END)
 
         license = self.view.get_license_actor()
         license.set_extra_text("Do what you want but I am RMFlynn")

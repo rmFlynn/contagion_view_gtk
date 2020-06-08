@@ -11,27 +11,27 @@ Long after the current health crisis has passed, contagions will continue to be 
 
 Contagion View has only been tested on Ubuntu 19.10 and 20.4.
 Python3 and pip should be installed and up to date.
-I also suggest you consider running this program in a [virtual environment](https://docs.python.org/3/library/venv.html).
+Normally I would also suggest you consider running this program in a [virtual environment](https://docs.python.org/3/library/venv.html), but in this case a key library (vext) looks to be broken so do so at your own risk. The Anaconda environment is also likely to be more trouble than it is worth.
 
 
 Download or clone the git repository 
 
->> git clone https://github.com/rmFlynn/contagion_view_gtk.git
+```
+git clone https://github.com/rmFlynn/contagion_view_gtk.git
+```
 
 Install prerequisites 
 
 ```
 sudo apt install libchamplain-gtk-0.12-0 python-gi
-pip install wheel pycairo pandas numpy matplotlib seaborn 
-pip install vext
-pip install vext.gi
+pip3 install wheel pycairo pandas numpy matplotlib seaborn 
 ```
-
-
 
 With the prerequisites installed the typical user should only need to execute:
 
->> python covid19_gtk.py 
+```
+python3 covid19_gtk.py 
+```
 
 If you want to update the data files your self you will need to understand and fallow the instructions in the next section.
 
@@ -58,8 +58,10 @@ Daily reports: one for each day of the year since 1/22/2020, that wasn't that lo
 **Acquisition commands:**
 
 
-> git submodule update --init
+```
+git submodule update --init
 
+```
 
 ##### Map data:
 
@@ -83,10 +85,11 @@ Each row of this file contains the county and state name and its shape, along wi
 
 
 
-> wget ftp://ftp2.census.gov/geo/tiger/TIGER2019/COUNTY/tl_2019_us_county.zip
-> unzip tl_2019_us_county.zip -d us_county_shapes
-> rm tl_2019_us_county.*
-
+```
+wget ftp://ftp2.census.gov/geo/tiger/TIGER2019/COUNTY/tl_2019_us_county.zip
+unzip tl_2019_us_county.zip -d us_county_shapes
+rm tl_2019_us_county.*
+```
 
 ##### Population data:
 
@@ -110,7 +113,9 @@ This is the most straightforward data set of all. This contains state and county
 
 
 
-> Wget [https://www2.census.gov/programs-surveys/popest/datasets/2010-2019/counties/totals/co-est2019-alldata.csv](https://www2.census.gov/programs-surveys/popest/datasets/2010-2019/counties/totals/co-est2019-alldata.csv)
+```
+Wget [https://www2.census.gov/programs-surveys/popest/datasets/2010-2019/counties/totals/co-est2019-alldata.csv](https://www2.census.gov/programs-surveys/popest/datasets/2010-2019/counties/totals/co-est2019-alldata.csv)
+```
 
 
 ##### Generated Data:
@@ -142,7 +147,6 @@ This is a simple design but highly effective.
 
 
 ![alt_text](image_1.png "Example")
-
 
 ##### Future Work
 
